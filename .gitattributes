@@ -1,0 +1,4 @@
+# Exact-byte signatures are shared by Git and the complete installation ZIP.
+* -text whitespace=cr-at-eol
+*.md whitespace=-blank-at-eol,cr-at-eol
+.githooks/pre-push text eol=lf

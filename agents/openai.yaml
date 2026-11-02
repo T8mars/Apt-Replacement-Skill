@@ -1,0 +1,4 @@
+interface:
+  display_name: "APT全自动人物替换复刻"
+  short_description: "使用两个人物参考图复刻APT原片，按44段生成、复核并组装成片"
+  default_prompt: "使用 $apt-character-replacement，根据这次两个人物参考图制作APT换角视频。"

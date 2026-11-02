@@ -1,0 +1,14 @@
+{
+  "skill": "apt-character-replacement",
+  "repository": "https://github.com/T8mars/Apt-Replacement-Skill",
+  "git_scope": "All manifest members except release-assets inventory; no media/executables",
+  "release_scope": "Complete licensed manifest only; original media SHA/provenance checked",
+  "forbidden": [
+    "ROADMAP.MD at any path/case",
+    "API Key and credentials",
+    "runtime/task/ledger data",
+    "personal references/candidates/final films",
+    "other skills",
+    "executables"
+  ]
+}

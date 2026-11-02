@@ -1,0 +1,27 @@
+# Complete licensed media is distributed only in the full Release package.
+*.mp4
+*.m4a
+*.png
+*.jpg
+*.jpeg
+*.exe
+*.dll
+*.zip
+*.7z
+*.sqlite*
+*.db
+*.pyc
+__pycache__/
+private/
+_private/
+runtime.json
+production-status.json
+rh_state*.json
+approved-queue.json
+api_key*
+apikey*
+.env*
+**/[Rr][Oo][Aa][Dd][Mm][Aa][Pp].[Mm][Dd]
+完成分段/
+制作分析/
+candidates/
