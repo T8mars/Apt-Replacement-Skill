@@ -1,5 +1,21 @@
 # APT全自动人物替换复刻 · APT Character Replacement Skill
 
+## 调用入口与优惠
+
+| 平台 | 入口 | 优惠 |
+| --- | --- | --- |
+| 贞贞 AI | [贞贞 AI 调用](https://www.zzai.app) | 免费 GPT Image 2.6 |
+| RunningHub | [国内站](https://www.runninghub.cn?inviteCode=kol01-rh099) · [国际站](https://www.runninghub.ai?inviteCode=rh-v1121) | 每日 3 次免费 H3 及优惠券 |
+| 晨羽 | [晨羽调用](https://www.chenyu.cn/console/login?invitationCode=NGT5S4) | T8 专属优惠券，见下表 |
+
+| 晨羽优惠 | 数量或领取条件 | 券码 |
+| --- | --- | --- |
+| 0.1 = 5 | 300 张 | `W6TGFF` |
+| 30 = 45 | 300 张 | `T8AIGC` |
+| 50 = 100 | 每位粉丝均可领取，每个账号限领一次 | `50VS50` |
+
+更多镜像陆续更新，可搜索 **t8star**。
+
 **版本 / Version: 1.2.1** · **Skill ID: `apt-character-replacement`**
 
 [中文使用说明](#中文使用说明) · [English guide](#english-guide) · [完整技能包 / Complete skill ZIP](https://github.com/T8mars/Apt-Replacement-Skill/releases/latest/download/apt-character-replacement.zip)
@@ -48,7 +64,7 @@ GitHub 的仓库及自动生成的 `Source code (zip)` 提供源码与说明。�
 
 ### 2. 准备账号与两张图
 
-- 需要 RunningHub 账号及能调用相应应用的 API Key。当前生成适配器使用海外站：[注册 RunningHub](https://www.runninghub.ai/?inviteCode=rh-v1121)。国内注册入口为 [runninghub.cn](https://www.runninghub.cn/?inviteCode=rh-v1121)，当前脚本不会自动切换到国内接口。
+- 需要 RunningHub 账号及能调用相应应用的 API Key。当前生成适配器使用海外站：[注册 RunningHub](https://www.runninghub.ai/?inviteCode=rh-v1121)。国内注册入口为 [runninghub.cn](https://www.runninghub.cn?inviteCode=kol01-rh099)，当前脚本不会自动切换到国内接口。
 - 准备两张清楚的人物图，分别作为一号和二号。多视图设定图可用；脸、头发、体型和服装越清楚，越便于保持身份。
 - Key 保存在技能目录和制作目录**之外的私有文本文件**，例如 `C:\MyPrivate\runninghub_key.txt`，向 Codex 提供文件路径即可。不要上传到GitHub或把它写进提示词。
 - 安装和离线检查不调用生成；正式制作会消耗你在 RunningHub 的额度。
@@ -96,6 +112,22 @@ python scripts/apt_project.py init --project "D:\APT_Project\run01" --references
 
 ## English guide
 
+### Service links and offers
+
+| Service | Access | Offer |
+| --- | --- | --- |
+| Zhenzhen AI | [Open Zhenzhen AI](https://www.zzai.app) | Free GPT Image 2.6 |
+| RunningHub | [Mainland China](https://www.runninghub.cn?inviteCode=kol01-rh099) · [International](https://www.runninghub.ai?inviteCode=rh-v1121) | Three free H3 runs per day, plus coupons |
+| Chenyu | [Open Chenyu](https://www.chenyu.cn/console/login?invitationCode=NGT5S4) | T8-exclusive coupons listed below |
+
+| Chenyu offer | Availability | Coupon code |
+| --- | --- | --- |
+| 0.1 = 5 | 300 coupons | `W6TGFF` |
+| 30 = 45 | 300 coupons | `T8AIGC` |
+| 50 = 100 | Available to every fan, once per account | `50VS50` |
+
+Search for **t8star** to find new mirror sites as they are added.
+
 ### What it does
 
 Provide Codex with **two character reference images and your own RunningHub API key file**. This skill replaces the two roles in the included APT sequence while preserving the original performance, shots, scene and soundtrack. Reuse the sequence with new characters, or swap the two role assignments.
@@ -123,7 +155,7 @@ The default is three concurrent jobs and 1MP generation. Segmentation follows th
 
 ### Prepare your inputs
 
-Use a RunningHub account and a key with access to the configured AI applications. The implemented adapter targets [runninghub.ai](https://www.runninghub.ai/?inviteCode=rh-v1121). A domestic [runninghub.cn registration](https://www.runninghub.cn/?inviteCode=rh-v1121) does not automatically change the script's endpoint.
+Use a RunningHub account and a key with access to the configured AI applications. The implemented adapter targets [runninghub.ai](https://www.runninghub.ai/?inviteCode=rh-v1121). A domestic [runninghub.cn registration](https://www.runninghub.cn?inviteCode=kol01-rh099) does not automatically change the script's endpoint.
 
 Keep your key in a private text file **outside the skill and production folders**, and give Codex the local file path. Never commit the key or put it into a prompt file. Installation and offline checks do not submit generation; an authorized production run uses your RunningHub credits.
 
