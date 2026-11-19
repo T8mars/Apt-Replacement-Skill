@@ -25,3 +25,8 @@ apikey*
 完成分段/
 制作分析/
 candidates/
+channel.json
+chenyu_state.json
+zhenzhen_state.json
+*.sqlite*
+*.key

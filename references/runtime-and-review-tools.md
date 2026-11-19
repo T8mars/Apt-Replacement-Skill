@@ -2,6 +2,10 @@
 
 适用于本技能新建的独立run，工具均从`assets/template`复制到run根目录。先读本次runtime.json与当前素材，不依赖历史制作目录。所有下述prepare/check及审片命令均不调用云端。
 
+## 新渠道队列
+
+先在新制作目录运行 README 中的 `channels.py select`。使用贞贞 AI 或晨羽时，队列保留原 `window_id`、`video_path`、`prompt_path`、角色顺序、实测 `generation_frames` 与 `generation_fps`。首次 `prepare` 自动写入所选渠道的 `profile`，无需提供 RH 的 `schema_path`。照常完成身份及动作复核，再执行 `check` 和 `run`。输入摘要绑定渠道与素材；已付费任务按原 ID 查询。每个新渠道各有一个本机共享台账，每个账户最多三项在途。下文的 RH 应用号与节点表仅供选择 RH 时使用。
+
 ## 队列准备与执行
 
 `rh_batch.py`保留原包配置、CAST和许可，旧提交入口已停用。实际生成使用`apt_runtime.py`，由同账户共享的私有SQLite台账约束3并发。默认台账与本机factory共用；这是本地账户对账，不是把APT发布到factory仓库。相同账户的其他工作也须使用同一台账、同一account_alias；网页手工任务和绕过台账的程序无法被该锁统计，开始前须对账，不能宣称锁能控制外部程序。

@@ -1,4 +1,6 @@
 {
+  "generation_providers": ["rh", "zhenzhen", "chenyu"],
+  "ordered_provider_references": true,
   "installed": true,
   "chinese_discovery_metadata": true,
   "self_contained_source_assets": true,

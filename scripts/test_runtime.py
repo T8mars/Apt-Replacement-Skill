@@ -145,6 +145,19 @@ class InputTests(unittest.TestCase):
         for item in reversed(self.patches):item.stop()
         self.temp.cleanup()
     def test_current_hash_bound_contract_valid(self):self.assertEqual(rt.validate(self.project,self.entry),self.entry['input_digest'])
+    def test_provider_queue_uses_native_roles_without_rh_schema(self):
+        (self.project/self.entry.pop('schema_path')).unlink()
+        with patch.object(rt.source,'app_config',side_effect=AssertionError('Unexpected RH access')):
+            for provider in ('chenyu','zhenzhen'):
+                rt.write(self.project/'channel.json',{'provider':provider})
+                self.entry['profile'] = rt.channels.profile(provider)
+                self.seal()
+                self.assertEqual(rt.validate(self.project,self.entry),self.entry['input_digest'])
+                self.entry['reference_paths'].reverse()
+                self.seal()
+                with self.assertRaises(ValueError):rt.validate(self.project,self.entry)
+                self.entry['reference_paths'].reverse()
+
     def test_changed_prompt_invalidates_semantic_review(self):
         (self.project/'提示词/041.txt').write_text('changed',encoding='utf8')
         with self.assertRaises(ValueError):rt.validate(self.project,self.entry)

@@ -16,7 +16,21 @@
 
 更多镜像陆续更新，可搜索 **t8star**。
 
-**版本 / Version: 1.2.1** · **Skill ID: `apt-character-replacement`**
+## 选择生成渠道
+
+每次收到新的一组参考图，先确认使用 RunningHub、贞贞 AI 还是晨羽。用户已指定时直接采用。恢复已有任务时沿用制作目录中的渠道和任务号。在新制作目录运行以下三条命令中的一条，选择渠道这一步不计费。
+
+```powershell
+python channels.py select --provider rh
+python channels.py select --provider zhenzhen --key-file "C:\MyPrivate\zhenzhen.key"
+python channels.py select --provider chenyu --key-file "C:\MyPrivate\chenyu.key"
+```
+
+两种新渠道各自使用所选平台的私有 Key；文件放在技能和制作目录之外。也可以省略 `--key-file`，使用 `ZZ_API_KEY_FILE` 或 `CHENYU_API_KEY_FILE` 指向私有文件。贞贞 AI 使用 `minimax-h3-comfyui-charswap`，把有序图片 URL 写入 `images`，运动视频和帧数放在 `metadata`。晨羽使用已发布的「Wuwu-视频角色替换」工作流，先校验版本，将图片分开上传并按当前镜头角色顺序绑定节点。
+
+每段保留原始动作帧。渠道需要补帧时，仅给 24 fps 提交副本追加末帧，最终仍按原帧表合片。提交中断时，已取得任务号的继续查询；晨羽可用 `python channels.py reconcile --attempt <本地尝试ID>` 恢复原订单。贞贞 AI 在平台核对该镜头的原任务号后，再添加 `--task-id <原任务号>`。
+
+**版本 / Version: 1.3.0** · **Skill ID: `apt-character-replacement`**
 
 [中文使用说明](#中文使用说明) · [English guide](#english-guide) · [完整技能包 / Complete skill ZIP](https://github.com/T8mars/Apt-Replacement-Skill/releases/latest/download/apt-character-replacement.zip)
 
@@ -31,14 +45,14 @@ Based on wuwukasi's original APT recreation package. Original attribution, licen
 
 ### 这是做什么的
 
-给 Codex **两张人物参考图和你的 RunningHub API Key**，按这套已拆好的 APT 原片替换人物，复核后输出保留原音轨的视频。支持同片换新人物和两个人物对调。
+给 Codex **两张人物参考图和所选渠道的私有 Key 文件路径**，按这套已拆好的 APT 原片替换人物，复核后输出保留原音轨的视频。支持同片换新人物和两个人物对调。
 
 | 项目 | 内容 |
 | --- | --- |
 | 固定原片 | 001–044，共44段；完整素材随技能包提供 |
 | 实际生成 | 40段；002、004、007、017保留原片 |
 | 最终视频 | 2316帧，24000/1001 fps，约96.60秒，1920×1080 |
-| 生成服务 | RunningHub海外站已适配的单图／双图应用 |
+| 生成服务 | RunningHub 海外单图／双图应用、贞贞 AI、晨羽 |
 | 默认策略 | 3并发、一采1MP；按原镜头，不固定切5秒；完整输入≤10秒 |
 
 这是**固定APT素材的换角技能**。其他新原视频应另做镜头分析，不能直接套用本包44段表。
@@ -64,10 +78,10 @@ GitHub 的仓库及自动生成的 `Source code (zip)` 提供源码与说明。�
 
 ### 2. 准备账号与两张图
 
-- 需要 RunningHub 账号及能调用相应应用的 API Key。当前生成适配器使用海外站：[注册 RunningHub](https://www.runninghub.ai/?inviteCode=rh-v1121)。国内注册入口为 [runninghub.cn](https://www.runninghub.cn?inviteCode=kol01-rh099)，当前脚本不会自动切换到国内接口。
+- 选 RH 时需要 RunningHub 账号及能调用相应应用的 API Key。当前生成适配器使用海外站：[注册 RunningHub](https://www.runninghub.ai/?inviteCode=rh-v1121)。国内注册入口为 [runninghub.cn](https://www.runninghub.cn?inviteCode=kol01-rh099)，当前脚本不会自动切换到国内接口。
 - 准备两张清楚的人物图，分别作为一号和二号。多视图设定图可用；脸、头发、体型和服装越清楚，越便于保持身份。
 - Key 保存在技能目录和制作目录**之外的私有文本文件**，例如 `C:\MyPrivate\runninghub_key.txt`，向 Codex 提供文件路径即可。不要上传到GitHub或把它写进提示词。
-- 安装和离线检查不调用生成；正式制作会消耗你在 RunningHub 的额度。
+- 安装和离线检查不调用生成；正式制作由所选渠道计费。
 
 原包中的两张图仅用于示例。每次新任务使用你本次提供的两张图；明确要求复用时沿用，避免反复索图。
 
@@ -112,6 +126,18 @@ python scripts/apt_project.py init --project "D:\APT_Project\run01" --references
 
 ## English guide
 
+### Choose a generation provider
+
+For each new pair of references, specify **RunningHub**, **Zhenzhen AI** or **Chenyu**. In the new production directory run exactly one of the following commands before preparing the queue. Resume in the same directory with the original account.
+
+```powershell
+python channels.py select --provider rh
+python channels.py select --provider zhenzhen --key-file "C:\MyPrivate\zhenzhen.key"
+python channels.py select --provider chenyu --key-file "C:\MyPrivate\chenyu.key"
+```
+
+Use your selected provider’s private key file, stored outside the skill and production folders. Zhenzhen uses the MiniMax H3 charswap model with ordered image URLs. Chenyu uploads a separate asset per role and binds each one to a workflow slot. Short clips receive a temporary final-frame hold when required. The final cut uses the original shot timing and soundtrack. Confirm the role mapping with a pilot before batching.
+
 ### Service links and offers
 
 | Service | Access | Offer |
@@ -130,7 +156,7 @@ Search for **t8star** to find new mirror sites as they are added.
 
 ### What it does
 
-Provide Codex with **two character reference images and your own RunningHub API key file**. This skill replaces the two roles in the included APT sequence while preserving the original performance, shots, scene and soundtrack. Reuse the sequence with new characters, or swap the two role assignments.
+Provide Codex with **two character reference images and your chosen provider’s private key file**. This skill replaces the two roles in the included APT sequence while preserving the original performance, shots, scene and soundtrack. Reuse the sequence with new characters, or swap the two role assignments.
 
 The package contains 44 fixed source segments: 40 are generated and 002/004/007/017 pass through unchanged. The final film is 2316 frames at 24000/1001 fps, approximately **96.60 seconds**, at **1920×1080**. It is a template for this APT sequence, rather than a general replacement tool for arbitrary new footage.
 
@@ -155,9 +181,9 @@ The default is three concurrent jobs and 1MP generation. Segmentation follows th
 
 ### Prepare your inputs
 
-Use a RunningHub account and a key with access to the configured AI applications. The implemented adapter targets [runninghub.ai](https://www.runninghub.ai/?inviteCode=rh-v1121). A domestic [runninghub.cn registration](https://www.runninghub.cn?inviteCode=kol01-rh099) does not automatically change the script's endpoint.
+For the RH route, use a RunningHub account and a key with access to the configured AI applications. The implemented adapter targets [runninghub.ai](https://www.runninghub.ai/?inviteCode=rh-v1121). A domestic [runninghub.cn registration](https://www.runninghub.cn?inviteCode=kol01-rh099) does not automatically change the script's endpoint.
 
-Keep your key in a private text file **outside the skill and production folders**, and give Codex the local file path. Never commit the key or put it into a prompt file. Installation and offline checks do not submit generation; an authorized production run uses your RunningHub credits.
+Keep your key in a private text file **outside the skill and production folders**, and give Codex the local file path. Never commit the key or put it into a prompt file. Installation and offline checks do not submit generation; an authorized production run is billed by the selected provider.
 
 Supply two clear character images, labeled role 1 and role 2. Original package images are examples, not silent defaults for new projects. Reuse previously supplied images only when requested.
 

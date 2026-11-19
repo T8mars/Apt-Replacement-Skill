@@ -196,7 +196,7 @@ class Transport:
 
     def _download_https(self, url, temp):
         began = time.monotonic()
-        with urllib.request.urlopen(urllib.request.Request(url), timeout=30) as r, temp.open('wb') as f:
+        with urllib.request.urlopen(urllib.request.Request(url,headers=getattr(self,'download_headers',{})), timeout=30) as r, temp.open('wb') as f:
             expected = r.headers.get('Content-Length')
             written = 0
             while True:
@@ -288,7 +288,7 @@ class Ledger:
         self.db.execute('INSERT OR IGNORE INTO accounts(alias) VALUES(?)', (alias,))
         return dict(self.db.execute('SELECT * FROM accounts WHERE alias=?', (alias,)).fetchone())
 
-    def reserve(self, alias, project, window, digest, retry_after=None):
+    def reserve(self, alias, project, window, digest, retry_after=None, request=None):
         self.db.execute('BEGIN IMMEDIATE')
         try:
             a = self.account(alias)
@@ -317,10 +317,15 @@ class Ledger:
             if used >= a['cap']:
                 self.db.execute('COMMIT')
                 return None
+            if request is not None and self.db.execute(
+                    "SELECT 1 FROM attempts WHERE account=? AND state IN ('SUBMITTING','SUBMISSION_UNKNOWN')",
+                    (alias,)).fetchone():
+                self.db.execute('COMMIT')
+                return None
             aid = uuid.uuid4().hex
             now = self.clock()
-            self.db.execute('INSERT INTO attempts(id,account,project,window,digest,state,created,updated) VALUES(?,?,?,?,?,?,?,?)',
-                            (aid, alias, str(Path(project).resolve()), window, digest, 'SUBMITTING', now, now))
+            self.db.execute('INSERT INTO attempts(id,account,project,window,digest,state,created,updated,request) VALUES(?,?,?,?,?,?,?,?,?)',
+                            (aid, alias, str(Path(project).resolve()), window, digest, 'SUBMITTING', now, now, request))
             self.event(aid, 'INTENT_RECORDED', {'input_digest': digest})
             self.db.execute('COMMIT')
             return aid
@@ -501,7 +506,10 @@ class Runner:
         if row['next_poll'] > self.ledger.clock():
             return
         try:
-            res = self.transport.query(row['task_id'])
+            if getattr(self.transport,'provider',None) == 'chenyu':
+                res = self.transport.query(row['task_id'], json.loads(row['request'])['body']['revision_id'])
+            else:
+                res = self.transport.query(row['task_id'])
         except ApiFailure as e:
             if e.code in DEFERRED_CODES:
                 self.ledger.defer_query(aid, e.code)
@@ -539,7 +547,7 @@ class Runner:
         videos = [r for r in results if r.get('url') and (str(r.get('outputType', '')).lower() in ('mp4', 'mov', 'video') or '.mp4' in r['url'].split('?')[0].lower())]
         if len(videos) != 1:
             n = row['missing_results'] + 1
-            self.ledger.update(aid, state='RESULTS_MISSING' if n >= 3 else 'SUCCESS_RESULTS_PENDING',
+            self.ledger.update(aid, state='RESULTS_MISSING' if n >= 3 and not getattr(self.transport,'provider',None) else 'SUCCESS_RESULTS_PENDING',
                                receipt=json.dumps(res), missing_results=n, next_poll=self.ledger.clock() + 30)
             return
         url = videos[0]['url']
